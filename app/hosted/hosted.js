@@ -49,7 +49,7 @@ const connector = async (event, context) => {
     // See comment in index.js: the JWT is decoded only, not verified.
     ({ institution } = jwt.decode(event.queryStringParameters.jwt));
   } else if (event.queryStringParameters?.institution && event.requestContext.http.method == 'POST') {
-    /* From Touchnet */
+    /* From PMT */
     ({ institution } = event.queryStringParameters);
   } else if (event.queryStringParameters?.s) {
     /* Cloud App */

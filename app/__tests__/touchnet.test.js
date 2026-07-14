@@ -1,10 +1,10 @@
-const TouchnetWS = require('../touchnet');
+const PMTWS = require('../payMyTuition');
 
 describe('generateTicketBody() validation', () => {
-  let touchnet;
+  let payMyTuition;
 
   beforeAll(async () => {
-    touchnet = await TouchnetWS.init('https://example.test/touchnet');
+    payMyTuition = await PMTWS.init('https://example.test/payMyTuition');
   });
 
   const baseOptions = {
@@ -19,32 +19,32 @@ describe('generateTicketBody() validation', () => {
 
   it('throws on XML tag injection in ticketName', async () => {
     const maliciousTicketName = 'user123</typ:ticketName><typ:nameValuePairs><typ:name>HACKER';
-    await expect(touchnet.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
+    await expect(payMyTuition.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
   });
 
   it('throws on XML comment injection in ticketName', async () => {
     const maliciousTicketName = 'user123<!-- INJECTED -->';
-    await expect(touchnet.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
+    await expect(payMyTuition.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
   });
 
   it('throws on CDATA injection in ticketName', async () => {
     const maliciousTicketName = 'user123]]><![CDATA[INJECTED';
-    await expect(touchnet.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
+    await expect(payMyTuition.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
   });
 
   it('throws on script tags in ticketName', async () => {
     const maliciousTicketName = 'admin<script>alert(1)</script>';
-    await expect(touchnet.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
+    await expect(payMyTuition.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
   });
 
   it('throws on quotes in ticketName', async () => {
     const maliciousTicketName = 'user"test';
-    await expect(touchnet.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
+    await expect(payMyTuition.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
   });
 
   it('throws on apostrophes in ticketName', async () => {
     const maliciousTicketName = "user'test";
-    await expect(touchnet.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
+    await expect(payMyTuition.generateTicket(maliciousTicketName, baseOptions)).rejects.toThrow('Invalid characters in ticketName');
   });
 
   it('accepts valid alphanumeric ticketName', async () => {
@@ -52,7 +52,7 @@ describe('generateTicketBody() validation', () => {
     // This will fail at the network level since we're using a test URL,
     // but the validation should pass
     try {
-      await touchnet.generateTicket(validTicketName, baseOptions);
+      await payMyTuition.generateTicket(validTicketName, baseOptions);
     } catch (e) {
       // Expected to fail at network level, not validation
       expect(e.message).not.toMatch(/Invalid characters/);

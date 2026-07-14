@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Ex Libris Touchnet Hosted Connector
+Description: Ex Libris PayMyTuition Hosted Connector
   
 Globals:
   Function:
@@ -8,7 +8,7 @@ Globals:
 Parameters:
   ConfigSecretName:
     Type: String
-    Default: TouchnetConnectorSecrets
+    Default: PayMyTuitionConnectorSecrets
   CustomDomainPath:
     Type: String
     Default: tn
@@ -19,7 +19,7 @@ Resources:
     Name: 'AWS::Include'
     Parameters:
       Location: s3://almadtest/sam/LambdaPublicIP.yaml
-  TouchnetConnectorApi:
+  PayMyTuitionConnectorApi:
     Type: AWS::Serverless::HttpApi
     Properties:
       StageVariables:
@@ -30,8 +30,8 @@ Resources:
             IdentitySource: '$request.header.Authorization'
             JwtConfiguration: 
               audience: 
-              - ExlCloudApp:!~exlibrisgroup/alma-touchnet-cloudapp
-              - ExlCloudApp:exlibrisgroup/alma-touchnet-cloudapp
+              - ExlCloudApp:!~exlibrisgroup/alma-payMyTuition-cloudapp
+              - ExlCloudApp:exlibrisgroup/alma-payMyTuition-cloudapp
               issuer: https://apps01.ext.exlibrisgroup.com/auth
             Name: JwtAuthorizer 
         # Uncomment this line to use the JWT authorizer for all routes
@@ -44,13 +44,13 @@ Resources:
         AllowMethods: [GET, PUT, OPTIONS, DELETE]
         AllowCredentials: True
         MaxAge: 600
-  TouchnetConnectorFunction:
+  PayMyTuitionConnectorFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: app/
       Handler: hosted/hosted.handler
       Layers:
-        - !Ref TouchnetConnectorDependencies
+        - !Ref PayMyTuitionConnectorDependencies
       Runtime: nodejs14.x
       Environment:
         Variables:
@@ -67,13 +67,13 @@ Resources:
         Options: 
           Type: HttpApi
           Properties:
-            ApiId: !Ref TouchnetConnectorApi
+            ApiId: !Ref PayMyTuitionConnectorApi
             Path: /{proxy+}
             Method: options
         GetConfig:
           Type: HttpApi
           Properties:
-            ApiId: !Ref TouchnetConnectorApi
+            ApiId: !Ref PayMyTuitionConnectorApi
             Path: /config
             Method: get
             Auth: 
@@ -81,7 +81,7 @@ Resources:
         SetConfig:
           Type: HttpApi
           Properties:
-            ApiId: !Ref TouchnetConnectorApi
+            ApiId: !Ref PayMyTuitionConnectorApi
             Path: /config
             Method: put
             Auth: 
@@ -89,7 +89,7 @@ Resources:
         DeleteConfig: 
           Type: HttpApi
           Properties:
-            ApiId: !Ref TouchnetConnectorApi
+            ApiId: !Ref PayMyTuitionConnectorApi
             Path: /config
             Method: delete
             Auth: 
@@ -97,14 +97,14 @@ Resources:
         Connector:
           Type: HttpApi
           Properties:
-            ApiId: !Ref TouchnetConnectorApi
+            ApiId: !Ref PayMyTuitionConnectorApi
             Path: /{proxy+}
             Method: any
-  TouchnetConnectorDependencies:
+  PayMyTuitionConnectorDependencies:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: !Sub "${AWS::StackName}-Dependencies"
-      Description: Dependencies for Touchnet Connector
+      Description: Dependencies for PayMyTuition Connector
       ContentUri: dependencies/
       CompatibleRuntimes:
         - nodejs12.x
@@ -161,13 +161,13 @@ Resources:
     Properties:
       DomainName: api.exldevnetwork.net
       ApiMappingKey: !Ref CustomDomainPath
-      ApiId: !Ref TouchnetConnectorApi
+      ApiId: !Ref PayMyTuitionConnectorApi
       Stage: $default
 
 Outputs:
-  TouchnetConnectorApi:
+  PayMyTuitionConnectorApi:
     Description: "Endpoint URL"
-    Value: !Sub "https://${TouchnetConnectorApi}.execute-api.${AWS::Region}.amazonaws.com/pinyin/"
+    Value: !Sub "https://${PayMyTuitionConnectorApi}.execute-api.${AWS::Region}.amazonaws.com/pinyin/"
   PublicIP:
     Description: Public IP for NAT Gateway
     Value: !Ref natPublicIP

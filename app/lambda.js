@@ -5,12 +5,14 @@ const { get, success } = require('./index');
 exports.handler = async (event /*, context */) => {
   const { path, method } = event.requestContext.http;
   let response;
-  if (path.startsWith('/touchnet/success') && method == 'POST') {
+  if (path.startsWith('/payMyTuition/dataReturn') && method == 'POST') {
     response = showSuccess(event);
-  } else if (path.startsWith('/touchnet/error')) {
-    console.error("An error has occurred in the Touchnet process");
-    return { statusCode: 400, body: 'An error has occurred in the Touchnet processing.' };
-  } else if (path.startsWith('/touchnet') && method == 'GET') {
+  // } else if (path.startsWith('/payMyTuition/success') && method == 'GET') {
+  //   response = showSuccess(event);
+  } else if (path.startsWith('/payMyTuition/error')) {
+    console.error("An error has occurred in the Pay My Tution process");
+    return { statusCode: 400, body: 'An error has occurred in the Pay My Tution processing.' };
+  } else if (path.startsWith('/payMyTuition') && method == 'GET') {
     response = connector(event);
   }
   return response;

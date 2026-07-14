@@ -1,22 +1,34 @@
 const process = require('process');
 const escapeHtml = require('escape-html');
 
-const redirectForm = (ticket, ticket_name, upay_site_id, upay_site_url) => {
+// const redirectForm = (ticket, ticket_name, upay_site_id, upay_site_url) => {
 
-  return `
-    <form method="post" action="${escapeHtml(upay_site_url || process.env.UPAY_SITE_URL)}" name="touchnet">
-      <input type="hidden" name="UPAY_SITE_ID" value="${escapeHtml(upay_site_id || process.env.UPAY_SITE_ID)}">
-      <input type="hidden" name="TICKET" value="${escapeHtml(ticket)}">
-      <input type="hidden" name="TICKET_NAME" value="${escapeHtml(ticket_name)}">
-    </form>
-    Redirecting to payment site.
-    <script>
-    window.onload = function(){
-      document.forms['touchnet'].submit();
-    }
-    </script>
-  `
-}
+//   return `
+//     <form method="post" action="${escapeHtml(upay_site_url || process.env.UPAY_SITE_URL)}" name="touchnet">
+//       <input type="hidden" name="UPAY_SITE_ID" value="${escapeHtml(upay_site_id || process.env.UPAY_SITE_ID)}">
+//       <input type="hidden" name="TICKET" value="${escapeHtml(ticket)}">
+//       <input type="hidden" name="TICKET_NAME" value="${escapeHtml(ticket_name)}">
+//     </form>
+//     Redirecting to payment site.
+//     <script>
+//     window.onload = function(){
+//       document.forms['touchnet'].submit();
+//     }
+//     </script>
+//   `
+// }
+
+// const redirectUser = (sessionUrl) => {
+
+//   return `
+//     Redirecting to payment site.
+//     <script>
+//     window.onload = function(){
+//       window.location.replace('${escapeHtml(sessionUrl)}');
+//     }
+//     </script>
+//   `
+// }
 
 const returnToReferrer = (referrer, message) => {
   let form = '<p>Payment successfully processed.</p>';
@@ -39,4 +51,4 @@ const returnToReferrer = (referrer, message) => {
   return form;
 }
 
-module.exports = { redirectForm, returnToReferrer };
+module.exports = { returnToReferrer };

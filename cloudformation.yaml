@@ -1,20 +1,20 @@
 ---
   AWSTemplateFormatVersion: '2010-09-09'
   Transform: AWS::Serverless-2016-10-31
-  Description: Ex Libris Touchnet Connetor
+  Description: Ex Libris PayMyTuition Connetor
   Parameters:
     AlmaApiKey:
       Type: String
       Description: Alma API Key. Obtain at https://developers.exlibrisgroup.com/alma/apis
     UpaySiteId:
       Type: String
-      Description: uPay Site ID. Obtain from Touchnet customer service.
+      Description: uPay Site ID. Obtain from PayMyTuition customer service.
     UpaySiteUrl:
       Type: String
-      Description: uPay Site URL. Obtain from Touchnet customer service.
-    TouchnetWsUrl:
+      Description: uPay Site URL. Obtain from PayMyTuition customer service.
+    PayMyTuitionWsUrl:
       Type: String
-      Description: Optional. Overrides the default Touchnet webservice URL.
+      Description: Optional. Overrides the default PayMyTuition webservice URL.
       Default: ''
   Resources:
     # https://gist.github.com/jweisman/e7960060022b9b9af18b81c9366f3b45
@@ -28,7 +28,7 @@
         DefinitionBody: 
           openapi: "3.0.1"
           info:
-            title: "TouchnetConnector"          
+            title: "PayMyTuitionConnector"          
           paths:
             /{proxy+}:
               x-amazon-apigateway-any-method:
@@ -37,7 +37,7 @@
                  type: "aws_proxy"
                  httpMethod: "POST"
                  uri:
-                   Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TouchnetConnector.Arn}/invocations"
+                   Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PayMyTuitionConnector.Arn}/invocations"
     Dependencies:
       Type: "AWS::Serverless::LayerVersion"
       Properties:
@@ -83,7 +83,7 @@
       Type: AWS::Lambda::Permission
       Properties:
         Action: lambda:InvokeFunction
-        FunctionName: !GetAtt TouchnetConnector.Arn
+        FunctionName: !GetAtt PayMyTuitionConnector.Arn
         Principal: apigateway.amazonaws.com
         SourceArn: !Join
           - ''
@@ -94,7 +94,7 @@
             - ":"
             - !Ref ProxyAPI
             - "/*/*"
-    TouchnetConnector:
+    PayMyTuitionConnector:
       Type: AWS::Serverless::Function
       Properties:
         FunctionName: !Sub "${AWS::StackName}-Function"
@@ -114,7 +114,7 @@
         Environment:
           Variables:
             ALMA_APIKEY: !Ref AlmaApiKey
-            TOUCHNET_WS_URL: !Ref TouchnetWsUrl
+            PAY_MY_TUITION_URL: !Ref PayMyTuitionWsUrl
             UPAY_SITE_ID: !Ref UpaySiteId
             UPAY_SITE_URL: !Ref UpaySiteUrl
   Outputs:

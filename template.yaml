@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Ex Libris Touchnet Connetor
+Description: Ex Libris Pay My Tuition Connetor
 
 Globals:
   Function:
@@ -10,15 +10,19 @@ Parameters:
   AlmaApiKey:
     Type: String
     Description: Alma API Key. Obtain at https://developers.exlibrisgroup.com/alma/apis
-  UpaySiteId:
+  PmtLoginKey: 
     Type: String
-    Description: uPay Site ID. Obtain from Touchnet customer service.
-  UpaySiteUrl:
+    Description: Pay My Tuition login key. Obtain from Pay My Tuition."
+  PmtTransactionKey: 
+    Type: String 
+    Description: Pay My Tuition transaction key. Obtain from Pay My Tuition.
+  PmtSecretKey: 
+    Type: String 
+    Description: Pay My Tuition secret key. Obtain from Pay My Tuition.
+  PayMyTuitionUrl:
     Type: String
-    Description: uPay Site URL. Obtain from Touchnet customer service.
-  TouchnetWsUrl:
-    Type: String
-    Description: Optional. Overrides the default Touchnet webservice URL.
+    Description: Optional. Overrides the default PMT.
+
 Resources:
   ConnectorFunction:
     Type: AWS::Serverless::Function 
@@ -29,33 +33,38 @@ Resources:
       Environment:
         Variables:
           ALMA_APIKEY: !Sub "${AlmaApiKey}"
-          UPAY_SITE_ID: !Sub "${UpaySiteId}"
-          UPAY_SITE_URL: !Sub "${UpaySiteUrl}"
-          TOUCHNET_WS_URL: !Sub "${TouchnetWsUrl}"
+          PMT_LOGIN_KEY: !Sub "${PmtLoginKey}"
+          PMT_TRAN_KEY: !Sub "${PmtTransactionKey}"
+          PMT_SECRET_KEY: !Sub "${PmtSecretKey}"
+          PMT_URL: !Sub "${PmtUrl}"
+          PMT_EXT_INST_REF: !Sub "${PmtExtInstRef}"
+          PMT_PMNT_DEST: !Sub "${PmtPmntDest}" 
+          # PMT_PAYMENT_TERM: !Sub "${PayMyTuitionPaymentTerm}"
+          PMT_PRIMO_PMNT_TYPE: !Sub "${PmtPrimoPmntType}"
       Events:
         Connector:
           Type: Api
           Properties:
-            Path: /touchnet
+            Path: /payMyTuition
             Method: get
         ConnectorSuccess:
           Type: Api
           Properties:
-            Path: /touchnet/success
+            Path: /payMyTuition/success
             Method: post 
         ConnectorError:
           Type: Api
           Properties:
-            Path: /touchnet/error
+            Path: /payMyTuition/error
             Method: get
 
 Outputs:
-  TouchnetConnectorApi:
+  PayMyTuitionConnectorApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/touchnet/"
-  TouchnetConnectorFunction:
-    Description: "Touchnet Connector Function ARN"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/payMyTuition/"
+  PayMyTuitionConnectorFunction:
+    Description: "Pay My Tution Connector Function ARN"
     Value: !GetAtt ConnectorFunction.Arn
-  TouchnetConnectorFunctionIamRole:
-    Description: "Implicit IAM Role created for Touchnet Connector function"
+  PayMyTuitionConnectorFunctionIamRole:
+    Description: "Implicit IAM Role created for Pay My Tution Connector function"
     Value: !GetAtt ConnectorFunctionRole.Arn

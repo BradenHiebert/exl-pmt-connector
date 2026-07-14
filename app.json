@@ -1,17 +1,32 @@
 {
-  "name": "Ex Libris-Touchnet Connector",
-  "description": "Connector between Ex Libris Alma and Primo and the Touchnet payment system.",
-  "repository": "https://github.com/ExLibrisGroup/exl-touchnet-connector",
+  "name": "Ex Libris-Pay-My-Tuition Connector",
+  "description": "Connector between Ex Libris Alma and Primo and the Pay My Tuition payment system.",
+  "repository": "https://github.com/BradenHiebert/exl-pmt-connector",
   "env": {
     "ALMA_APIKEY": {
       "description": "Alma API Key. Obtain at https://developers.exlibrisgroup.com/alma/apis"
     },
-    "UPAY_SITE_ID": {
-      "description": "uPay Site ID. Obtain from Touchnet customer service."
+    "PMT_URL": {
+      "description": "Pay My Tuition portal redirect URL. Obtain from "
     },
-    "UPAY_SITE_URL": {
-      "description": "uPay Site URL. Obtain from Touchnet customer service."
+    "PMT_LOGIN_KEY": {
+      "description": "Pay My Tuition login key. Obtain from Pay My Tuition."
+    },
+    "PMT_TRANSACTION_KEY": {
+      "description": "Pay My Tuition transaction key. Obtain from Pay My Tuition."
+    },
+    "PMT_SECRET_KEY": {
+      "description": "Pay My Tuition secret key. Obtain from Pay My Tuition."
+    },
+    "PMT_PMNT_DEST": {
+      "description": "The portal used to process the transaction. Options are: International and Domestic"
+    },
+    "PMT_EXT_INST_REF": {
+      "description": "The instutiton reference inside Pay My Tuition. Obtain from Pay My Tuition"
+    },
+    "PMT_PRIMO_PMNT_TYPE":  {
+      "description": "The payment type indicator for PRIMO payments. Obtain from Pay My Tuition"
     }
   },
-  "success_url": "/touchnet"
+  "success_url": "/payMyTuition"
 }
