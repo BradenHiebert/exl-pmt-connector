@@ -71,7 +71,7 @@ const get = async (qs, returnUrl, referrer) => {
 
   if (qs.s) {
     /* From CloudApp */
-    ({ user_id, total_sum } = JSON.parse(frombase64(qs.s)));
+    throw new Error('Pay My Tuition does not support the cloud app flow')
     post_message = 'true';
   } else if (qs.jwt) {
     /* From Primo VE */
@@ -120,35 +120,25 @@ const get = async (qs, returnUrl, referrer) => {
       throw new Error('Cannot retrieve user details information.');
     }
   }
-// console.log(user_id)
+
   ({ total_sum } = await getFees(user_id, library));
-  // if (!user_id || total_sum <= 0) throw new Error('Nothing to pay');
-// total_sum = 100;
-// user_id = 'TEST';
-// institution = 'testInst';
-// returnUrl = 'bhiebert.3utilities.com'
-// console.log(total_sum);
+  if (!user_id || total_sum <= 0) throw new Error('Nothing to pay');
+
   await init(payMyTuition_url);
 
-  // const ticketName = `${user_id}|${referrer}|${post_message}`;
-  // const ticketName = `${user_id}|${post_message}`;
   const ticketName = user_id + "_" + Date.now();
-console.log(ticketName);  
   try {
     let personalRedirectUrl = await payMyTuition.retrievePaymentUrl(ticketName, {
       user_id: user_id,
       amount: total_sum,
-      // success: referrer,
       dataReturn: returnUrl + '/payMyTuition/dataReturn',
       error: returnUrl + '/payMyTuition/error',
       cancel: returnUrl + '/payMyTuition/error',
       referrer: referrer,
-      // post_message: post_message,
       institution: institution
     });
     console.log('Successfully received redirect URL ', personalRedirectUrl);
     return personalRedirectUrl
-    // return responses.redirectUser(personalRedirectUrl);
   } catch (e) {
     console.error("Error in setting up payment:", e.message)
     throw new Error('Cannot prepare payment information.');
@@ -167,23 +157,17 @@ app.post('/payMyTuition/dataReturn', async(request, response) => {
 const dataReturn = async (headers, body, rawBody) => {
   await init();
 
-  let receipt, user_id, referrer, post_message;
+  let receipt, user_id, amount;
   try {
     ({ receipt, user_id, amount } = payMyTuition.authorize(headers['authorization'], headers['x_date'], body, rawBody));
-    // ({ receipt, user_id, referrer, post_message, amount } = payMyTuition.authorize(header('authorization'), header('X_DATE'), body));
   } catch(e) {
     console.error("Error while authorizing payment:", e.message);
     throw new Error('Could not authorize payment.')
   }
   
-  try {
-    if (post_message === 'true') {
-      // return responses.returnToReferrer(referrer, { amount: amount, external_transaction_id: receipt, user_id: user_id });
-    } else {    
-      await payFees(user_id, amount, receipt, library);
-      console.log('Payment posted to Alma. Returning to referrer', referrer);
-      // return responses.returnToReferrer(referrer);
-    }
+  try { 
+    await payFees(user_id, amount, receipt, library);
+    console.log('Payment posted to Alma');
   } catch (e) {
     console.error("Error in posting payment to Alma:", e.message);
     throw new Error('Could not post payment to Alma')

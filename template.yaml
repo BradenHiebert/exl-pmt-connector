@@ -39,7 +39,6 @@ Resources:
           PMT_URL: !Sub "${PmtUrl}"
           PMT_EXT_INST_REF: !Sub "${PmtExtInstRef}"
           PMT_PMNT_DEST: !Sub "${PmtPmntDest}" 
-          # PMT_PAYMENT_TERM: !Sub "${PayMyTuitionPaymentTerm}"
           PMT_PRIMO_PMNT_TYPE: !Sub "${PmtPrimoPmntType}"
       Events:
         Connector:

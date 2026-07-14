@@ -17,7 +17,6 @@ class PayMyTuition {
     || !process.env.PMT_EXT_INST_REF
     || !process.env.PMT_PMNT_DEST
     || !process.env.PMT_PRIMO_PMNT_TYPE) {
-    // || !process.env.PMT_PAYMENT_TERM) {
       throw new Error('Missing required Pay My Tuition settings');
     }
     this.uri = process.env.PMT_URL;
@@ -29,7 +28,6 @@ class PayMyTuition {
   async retrievePaymentUrl(ticketName, options) {
     let body = generatePreloadBody(ticketName, options)
     let returnJson = await pmtRequest(this.uri, this.login, this.trnKey, this.auth, body);
-    // let returnJson = response.json();
     if(!returnJson.isSucceeded || returnJson.isSucceeded == "false") {
       throw new Error('Preload request failed');
     }
@@ -49,7 +47,6 @@ class PayMyTuition {
       throw new Error('Invalid Signature');
     }
 
-    // const jsonBody = JSON.parse(body);
     const [user_id, referrer, post_message] = jsonBody.OrderId.split("|");
     return { 
       receipt:  jsonBody.TransactionId,

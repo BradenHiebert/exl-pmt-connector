@@ -12,7 +12,7 @@
     "PMT_LOGIN_KEY": {
       "description": "Pay My Tuition login key. Obtain from Pay My Tuition."
     },
-    "PMT_TRANSACTION_KEY": {
+    "PMT_TRAN_KEY": {
       "description": "Pay My Tuition transaction key. Obtain from Pay My Tuition."
     },
     "PMT_SECRET_KEY": {
